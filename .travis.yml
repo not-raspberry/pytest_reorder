@@ -1,0 +1,10 @@
+language: python
+python:
+  - '2.7'
+install:
+    - './setup.py develop'
+    - "pip install -e '.[tests]'"
+script:
+    - pylama
+    - py.test -vvvv --showlocals
+sudo: false
