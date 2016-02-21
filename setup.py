@@ -2,7 +2,7 @@
 # coding: utf-8
 """Project setup."""
 import os
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -10,15 +10,13 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.rst')) as f:
     README = f.read()
 
-# Requirements specified up to the minor version to allow bugfixes to be automatically applied.
 REQUIREMENTS = [
+    'pytest',
 ]
 
-# Versions of test requirements kept exact to avoid broken builds due to API breakage in updates.
 TEST_REQUIREMENTS = [
     'pylama==7.0.6',
     'pytest==2.8.5',
-    'mock==1.3.0',
 ]
 
 setup(
@@ -37,11 +35,8 @@ setup(
     author='Michał Pawłowski',
     author_email='@'.join(['unittestablecode', 'gmail.com']),
     license='MIT',
-    packages=find_packages(exclude=['test']),
+    py_modules=['pytest_reorder'],
     install_requires=REQUIREMENTS,
     tests_require=TEST_REQUIREMENTS,
     extras_require={'tests': TEST_REQUIREMENTS},
-    cmdclass={},
-    entry_points={
-    },
 )
