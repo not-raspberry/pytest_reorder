@@ -102,12 +102,12 @@ def test_make_reordering_hook_bad_order():
 def test_invoke_test_suite():
     """Check the order of a sample test suite, invoked in a separate process."""
     output = subprocess.check_output(['py.test', 'sample_test_suite'])
-    lines_with_test_modules = [line for line in output.split('\n')
-                               if line.startswith('sample_test_suite/')]
+    lines_with_test_modules = [line for line in output.split(b'\n')
+                               if line.startswith(b'sample_test_suite/')]
     test_modules = [line.split()[0] for line in lines_with_test_modules]
     assert test_modules == [
-        'sample_test_suite/unit/test_some_unit.py',
-        'sample_test_suite/test_sample.py',
-        'sample_test_suite/integration/test_some_integration.py',
-        'sample_test_suite/ui/test_some_ui.py',
+        b'sample_test_suite/unit/test_some_unit.py',
+        b'sample_test_suite/test_sample.py',
+        b'sample_test_suite/integration/test_some_integration.py',
+        b'sample_test_suite/ui/test_some_ui.py',
     ]

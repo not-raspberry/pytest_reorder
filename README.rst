@@ -1,5 +1,8 @@
-pytest_reorder
-==============
+pytest_reorder |status|
+=======================
+
+.. |status| image:: https://travis-ci.org/not-raspberry/pytest_reorder.svg?branch=master
+    :target: https://travis-ci.org/not-raspberry/pytest_reorder
 
 Reorder tests depending on their paths.
 
@@ -22,6 +25,11 @@ The ordering depends on what's left after the prefix is stripped. For details se
 the code of ``pytest_reorder.make_reordering_hook``.
 
 Django projects that store tests in Django-style 'apps' will not work with pytest-reorder.
+
+
+Pythons supported
+-----------------
+CPythons 2.7, 3.2, 3.3, 3.4, 3.5, 3.5-dev, nightly. PyPy and PyPy3.
 
 HOWTO
 -----
@@ -61,10 +69,3 @@ With pytest_reorder
     sample_test_suite/test_sample.py ...
     sample_test_suite/integration/test_some_integration.py ..
     sample_test_suite/ui/test_some_ui.py .
-
-
-Status
-------
-
-.. image:: https://travis-ci.org/not-raspberry/pytest_reorder.svg?branch=master
-    :target: https://travis-ci.org/not-raspberry/pytest_reorder
