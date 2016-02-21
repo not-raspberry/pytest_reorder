@@ -1,5 +1,6 @@
 """Pytest-reorder test suite."""
 import pytest
+import subprocess
 from mock import Mock
 from pytest_reorder import get_common_prefix, pytest_collection_modifyitems
 
@@ -62,3 +63,17 @@ def test_reordering(test_names, expected_test_order):
 
     reordered_test_names = [item.nodeid for item in test_items]
     assert reordered_test_names == expected_test_order
+
+
+def test_invoke_test_suite():
+    """Check the order of a sample test suite, invoked in a separate process."""
+    output = subprocess.check_output(['py.test', 'sample_test_suite'])
+    lines_with_test_modules = [line for line in output.split('\n')
+                               if line.startswith('sample_test_suite/')]
+    test_modules = [line.split()[0] for line in lines_with_test_modules]
+    assert test_modules == [
+        'sample_test_suite/unit/test_some_unit.py',
+        'sample_test_suite/test_sample.py',
+        'sample_test_suite/integration/test_some_integration.py',
+        'sample_test_suite/ui/test_some_ui.py',
+    ]
