@@ -6,5 +6,5 @@ install:
     - "pip install -e '.[tests]'"
 script:
     - pylama
-    - py.test test/ -vvvv --showlocals
+    - py.test test_pytest_reorder.py -vvvv --showlocals
 sudo: false
