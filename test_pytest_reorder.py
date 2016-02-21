@@ -2,7 +2,10 @@
 import pytest
 import subprocess
 from mock import Mock
-from pytest_reorder import get_common_prefix, pytest_collection_modifyitems
+from pytest_reorder import (
+    get_common_prefix, pytest_collection_modifyitems, make_reordering_hook,
+    EmptyTestsOrderList, UndefinedUnmatchedTestsOrder
+)
 
 
 @pytest.mark.parametrize('s1, s2, prefix', [
@@ -63,6 +66,37 @@ def test_reordering(test_names, expected_test_order):
 
     reordered_test_names = [item.nodeid for item in test_items]
     assert reordered_test_names == expected_test_order
+
+
+def test_custom_test_order():
+    """Test reordering with a custom hook."""
+    tests_names = [
+        'test_suite/test_aaa.py',
+        'test_suite/test_bbb.py',
+        'test_suite/test_ccc.py',
+        'test_suite/test_fff.py',
+    ]
+    test_items = [Mock(nodeid=test_name) for test_name in tests_names]
+
+    reorder_hook = make_reordering_hook(['c', 'b', 'a', None])
+    reorder_hook(None, None, test_items)
+    reordered_test_names = [item.nodeid for item in test_items]
+
+    assert reordered_test_names == [
+        'test_suite/test_ccc.py',
+        'test_suite/test_bbb.py',
+        'test_suite/test_aaa.py',
+        'test_suite/test_fff.py',
+    ]
+
+
+def test_make_reordering_hook_bad_order():
+    """Check what happens when a malformed list is passed to ``make_reordering_hook``."""
+    with pytest.raises(EmptyTestsOrderList):
+        make_reordering_hook([])
+
+    with pytest.raises(UndefinedUnmatchedTestsOrder):
+        make_reordering_hook(['sth', 'sth_else', 'etc'])
 
 
 def test_invoke_test_suite():
