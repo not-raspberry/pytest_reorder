@@ -26,6 +26,9 @@ def get_common_prefix(s1, s2):
 
 def pytest_collection_modifyitems(session, config, items):
     """Reorder tests according to the ORDER constant."""
+    if items == []:
+        return
+
     nodeids = [i.nodeid for i in items]
     common_prefix = reduce(get_common_prefix, nodeids)
 

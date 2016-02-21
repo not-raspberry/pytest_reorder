@@ -51,6 +51,8 @@ def test_get_common_prefix(s1, s2, prefix):
     (['test_other.py', 'test_integration.py', 'test_ui.py'],
      ['test_other.py', 'test_integration.py', 'test_ui.py']),
 
+    # No tests at all:
+    ([], []),
 ])
 def test_reordering(test_names, expected_test_order):
     """Call library's ``pytest_collection_modifyitems`` function and check resulting tests order."""
