@@ -83,7 +83,7 @@ def make_reordering_hook(prefixes_order):
             :rtype: int
             :return sort key dependent on the test prefix; integer starting from zero
             """
-            varying_nodeid_part = item.nodeid.partition(common_prefix)[-1]
+            varying_nodeid_part = item.nodeid[len(common_prefix):]
             for prefix, order in prefix_to_order.items():
                 if varying_nodeid_part.startswith(prefix):
                     return order

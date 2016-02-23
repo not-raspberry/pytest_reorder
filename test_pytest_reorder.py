@@ -39,6 +39,10 @@ def test_get_common_prefix(s1, s2, prefix):
     (['test_other.py', 'test_integration.py', 'test_ui.py', 'test_unit.py'],
      ['test_unit.py', 'test_other.py', 'test_integration.py', 'test_ui.py']),
 
+    # No common prefix:
+    (['other/test_sth.py', 'integration/test_sth.py', 'ui/test_sth.py', 'unit/test_sth.py'],
+     ['unit/test_sth.py', 'other/test_sth.py', 'integration/test_sth.py', 'ui/test_sth.py']),
+
     # No integration tests:
     (['test_other.py', 'test_ui.py', 'test_unit.py'],
      ['test_unit.py', 'test_other.py', 'test_ui.py']),
