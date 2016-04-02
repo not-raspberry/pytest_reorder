@@ -33,7 +33,36 @@ def get_common_prefix(s1, s2):
     return s1
 
 
-def make_reordering_hook(prefixes_order):
+def unpack_test_ordering(ordering):
+    """
+    Build a map of test names substrings to the order of tests that match them.
+
+    >>> unpack_test_ordering(['a', 'b', None, 'k'])
+    ({'a': 0, 'b': 1, 'k': 3}, 2)
+
+    :param list ordering: a list of substrings of test names in desired order,
+        One None is required in the list to designate any test not matching any of the strings.
+    :raise EmptyTestsOrderList:
+    :raise UndefinedUnmatchedTestsOrder:
+    :rtype: tuple
+    :return: 2-tuple of a mapping of substrings to their positions in ordering and an int of
+        the position of the tests that don't match any of the substrings.
+    """
+    if len(ordering) == 0:
+        raise EmptyTestsOrderList('The ordering list is empty.')
+
+    substring_to_order = {substring: index for index, substring in enumerate(ordering)
+                          if substring is not None}
+    try:
+        unmatched_order = ordering.index(None)
+    except ValueError:
+        raise UndefinedUnmatchedTestsOrder(
+            'The list does not specify the order of unmatched tests.')
+
+    return substring_to_order, unmatched_order
+
+
+def make_prefix_reordering_hook(prefixes_order):
     """
     Given a list of ordered prefixes, return a reorder hook to arrange the tests in that order.
 
@@ -50,19 +79,12 @@ def make_reordering_hook(prefixes_order):
         as strings.  One None is required in the list to designate any test not matched with any of
         the prefixes.  E.g. ['unit', None, 'db', 'integration', 'webqa'] - this makes tests with
         varying parts of names beginning with 'unit' run first, then unmatched, then 'db', etc.
+    :raise EmptyTestsOrderList:
+    :raise UndefinedUnmatchedTestsOrder:
     :rtype: function
     :return: a valid ``pytest_collection_modifyitems`` hook to reorder collected tests
     """
-    if len(prefixes_order) == 0:
-        raise EmptyTestsOrderList('The list of prefixes is empty.')
-
-    prefix_to_order = {prefix: index for index, prefix in enumerate(prefixes_order)
-                       if prefix is not None}
-    try:
-        unmatched_order = prefixes_order.index(None)
-    except ValueError:
-        raise UndefinedUnmatchedTestsOrder(
-            'The list does not specify the order of unmatched tests.')
+    prefix_to_order, unmatched_order = unpack_test_ordering(prefixes_order)
 
     def pytest_collection_modifyitems(session, config, items):
         """Reorder tests according to the list %r.""" % (prefixes_order,)
@@ -94,4 +116,4 @@ def make_reordering_hook(prefixes_order):
     return pytest_collection_modifyitems
 
 
-pytest_collection_modifyitems = make_reordering_hook(DEFAULT_ORDER)
+default_prefix_reordering_hook = make_prefix_reordering_hook(DEFAULT_ORDER)
