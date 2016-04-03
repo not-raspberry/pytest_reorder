@@ -3,8 +3,8 @@ import pytest
 import subprocess
 from mock import Mock
 from pytest_reorder import (
-    get_common_prefix, default_prefix_reordering_hook,
-    make_prefix_reordering_hook,
+    get_common_prefix, default_flat_reordering_hook,
+    make_flat_reordering_hook,
 )
 
 
@@ -66,7 +66,7 @@ def test_prefix_reordering_default(test_names, expected_test_order):
     """Call library's ``pytest_collection_modifyitems`` function and check resulting tests order."""
     test_items = [Mock(nodeid=test_name) for test_name in test_names]
 
-    default_prefix_reordering_hook(None, None, test_items)
+    default_flat_reordering_hook(None, None, test_items)
 
     reordered_test_names = [item.nodeid for item in test_items]
     assert reordered_test_names == expected_test_order
@@ -82,7 +82,7 @@ def test_prefix_reordering_custom_test_order():
     ]
     test_items = [Mock(nodeid=test_name) for test_name in tests_names]
 
-    reorder_hook = make_prefix_reordering_hook(['c', 'b', 'a', None])
+    reorder_hook = make_flat_reordering_hook(['c', 'b', 'a', None])
     reorder_hook(None, None, test_items)
     reordered_test_names = [item.nodeid for item in test_items]
 

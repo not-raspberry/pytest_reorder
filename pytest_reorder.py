@@ -62,7 +62,7 @@ def unpack_test_ordering(ordering):
     return substring_to_order, unmatched_order
 
 
-def make_prefix_reordering_hook(prefixes_order):
+def make_flat_reordering_hook(prefixes_order):
     """
     Given a list of ordered prefixes, return a reorder hook to arrange the tests in that order.
 
@@ -116,4 +116,4 @@ def make_prefix_reordering_hook(prefixes_order):
     return pytest_collection_modifyitems
 
 
-default_prefix_reordering_hook = make_prefix_reordering_hook(DEFAULT_ORDER)
+default_flat_reordering_hook = make_flat_reordering_hook(DEFAULT_ORDER)

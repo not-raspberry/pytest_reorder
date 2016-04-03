@@ -38,16 +38,16 @@ Modify your main conftest file (e.g. ``tests/conftest.py``) to include:
 
 .. code:: python
 
-    from pytest_reorder import default_prefix_reordering_hook as pytest_collection_modifyitems  # add noqa here if you use pyflakes
+    from pytest_reorder import default_flat_reordering_hook as pytest_collection_modifyitems  # add noqa here if you use pyflakes
 
 or specify a custom test order:
 
 .. code:: python
 
-    from pytest_reorder import make_prefix_reordering_hook
+    from pytest_reorder import make_flat_reordering_hook
     # Make unit tests run before 'db' tests, which run before 'web' tests. Other tests will run at
     # the very beginning of the suite:
-    pytest_collection_modifyitems = make_prefix_reordering_hook([None, 'unit', 'db', 'web'])
+    pytest_collection_modifyitems = make_flat_reordering_hook([None, 'unit', 'db', 'web'])
 
 
 Without pytest_reorder
