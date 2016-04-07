@@ -1,8 +1,22 @@
 """A pre-specified hook to reorder functions and its building blocks."""
-from functools import reduce
+import re
 
 
-DEFAULT_ORDER = ('unit', None, 'integration', 'ui')  # None - no prefix matched.
+# Default regular expressions match varying paths - for example the unit tests re matches:
+# tests/unit/...
+# test_unit.py
+# app/tests/unit/....
+# tests/test_unit
+# unit
+# But won't match (e.g.):
+# some_unit
+# abc_test_unit
+DEFAULT_ORDER = (
+    r'(^|.*/)(test_)?unit',
+    None,  # None - no match.
+    r'(^|.*/)(test_)?integration',
+    r'(^|.*/)(test_)?ui',
+)
 
 
 class PytestReorderError(Exception):
@@ -17,97 +31,71 @@ class UndefinedUnmatchedTestsOrder(PytestReorderError):
     """Raised when the list defining tests order does not specify the order for unmatched tests."""
 
 
-def get_common_prefix(s1, s2):
-    """
-    Return common prefix of the strings.
-
-    :param str s1:
-    :param str s2:
-    :return: common prefix of s1 and s2, possibly an empty string
-    :rtype: str
-    """
-    for i in range(1, min(len(s1), len(s2))):
-        if s1[:i] != s2[:i]:
-            return s1[:i - 1]
-
-    return s1
-
-
 def unpack_test_ordering(ordering):
     """
-    Build a map of test names substrings to the order of tests that match them.
+    Build a list of compiled regexes and the order of tests they match; get unmatched tests order.
 
     >>> unpack_test_ordering(['a', 'b', None, 'k'])
-    ({'a': 0, 'b': 1, 'k': 3}, 2)
+    ([('a', 0), ('b', 1), ('k', 3)], 2)
 
-    :param list ordering: a list of substrings of test names in desired order,
-        One None is required in the list to designate any test not matching any of the strings.
-    :raise EmptyTestsOrderList:
-    :raise UndefinedUnmatchedTestsOrder:
+    :param list ordering: a list of re strings matching test nodeids in desired order,
+        One None is required in the list to designate tests not matching any of the regexes.
+    :raise EmptyTestsOrderList: if the ``ordering`` list is empty
+    :raise UndefinedUnmatchedTestsOrder: if ``ordering`` does not specify the order of unmatched
+        tests
     :rtype: tuple
-    :return: 2-tuple of a mapping of substrings to their positions in ordering and an int of
-        the position of the tests that don't match any of the substrings.
+    :return: 2-tuple of a list of tuples of compiled regexes and positions of the tests that match
+        them and an int of the position of the tests that don't match any of the regular
+        expressions.
     """
     if len(ordering) == 0:
         raise EmptyTestsOrderList('The ordering list is empty.')
 
-    substring_to_order = {substring: index for index, substring in enumerate(ordering)
-                          if substring is not None}
+    re_to_order = [(re.compile(regex), index) for index, regex in enumerate(ordering)
+                   if regex is not None]
     try:
         unmatched_order = ordering.index(None)
     except ValueError:
         raise UndefinedUnmatchedTestsOrder(
             'The list does not specify the order of unmatched tests.')
 
-    return substring_to_order, unmatched_order
+    return re_to_order, unmatched_order
 
 
-def make_flat_reordering_hook(prefixes_order):
+def make_reordering_hook(ordered_re_strings_matching_tests):
     """
-    Given a list of ordered prefixes, return a reorder hook to arrange the tests in that order.
+    Given a list of ordered regexps matching tests, return a hook to arrange tests in that order.
 
-    The tests names will be stripped from the common prefix, leaving out the varying parts:
+    The tests will be sorted depending on which regular expressions they match.
+    This list should contain one None for unmatched tests.
 
-        'tests/unit...', 'tests/integration/...' -> 'unit...', 'integration/...'
-        (common prefix - 'tests/')
-
-    The tests will be sorted depending on what their varying parts start with.
-    The ``prefixes_order`` list specifies how to arrange the tests. This list should contain
-    prefixes of the varying parts in desired order and None for unmatched tests.
-
-    :param list prefixes_order: a list of prefixes of varying parts of test names in desired order,
-        as strings.  One None is required in the list to designate any test not matched with any of
-        the prefixes.  E.g. ['unit', None, 'db', 'integration', 'webqa'] - this makes tests with
-        varying parts of names beginning with 'unit' run first, then unmatched, then 'db', etc.
-    :raise EmptyTestsOrderList:
-    :raise UndefinedUnmatchedTestsOrder:
+    :param list ordered_re_strings_matching_tests: a list of regular expression strings that match
+        nodeids of tests (sample nodeid: 'tests/ui/test_some_ui.py::test_something_ui') and one None
+        to specify the order of tests that don't match any of the regular expressions.
+        E.g.: ``[r'*.unit', None, r'.*integration']`` - will make the hook place unit tests first,
+        then unmatched tests, and integration tests at the end.
+    :raise EmptyTestsOrderList: if the ``ordered_re_strings_matching_tests`` list is empty
+    :raise UndefinedUnmatchedTestsOrder: if ``ordered_re_strings_matching_tests`` does not contain
+        one None, thus does not define the order of unmatched tests
     :rtype: function
     :return: a valid ``pytest_collection_modifyitems`` hook to reorder collected tests
     """
-    prefix_to_order, unmatched_order = unpack_test_ordering(prefixes_order)
+    re_to_order, unmatched_order = unpack_test_ordering(ordered_re_strings_matching_tests)
 
     def pytest_collection_modifyitems(session, config, items):
-        """Reorder tests according to the list %r.""" % (prefixes_order,)
-        if items == []:
-            return
-
-        nodeids = [i.nodeid for i in items]
-        common_prefix = reduce(get_common_prefix, nodeids)
-
+        """Reorder tests according to the list %r.""" % (ordered_re_strings_matching_tests,)
         def sort_key(item):
             """
             Get the sort key for tests reordering.
 
-            The key depends exclusively on the prefix. Therefore all strings with varying parts
-            starting with the same prefix will have the same key. This is OK, since ``list.sort``
-            is stable.
+            All items with matching the same regular expression the same key. This is OK since
+            `list.sort`` is stable.
 
             :rtype: int
-            :return sort key dependent on the test prefix; integer starting from zero
+            :return sort key dependent on the matched regex; integer starting from zero
             """
-            varying_nodeid_part = item.nodeid[len(common_prefix):]
-            for prefix, order in prefix_to_order.items():
-                if varying_nodeid_part.startswith(prefix):
+            for regex, order in re_to_order:
+                if regex.match(item.nodeid):
                     return order
             return unmatched_order
 
@@ -116,4 +104,4 @@ def make_flat_reordering_hook(prefixes_order):
     return pytest_collection_modifyitems
 
 
-default_flat_reordering_hook = make_flat_reordering_hook(DEFAULT_ORDER)
+default_reordering_hook = make_reordering_hook(DEFAULT_ORDER)

@@ -17,14 +17,8 @@ the following order:
 #. *integration*
 #. *ui*
 
-You can also specify your custom order.
-
-**pytest_reorder** assumes the paths of all test modules begin with a common prefix. Most projects
-keep their tests in a separate ``tests`` directory and therefore meet this assumption.
-The ordering depends on what's left after the prefix is stripped. For details see the docstring and
-the code of ``pytest_reorder.make_reordering_hook``.
-
-Django projects that store tests in Django-style 'apps' will not work with pytest-reorder.
+The default regular expressions can find unit, integration and UI tests both laid flat and deeply
+nested. You can also specify your custom order.
 
 
 Pythons supported
@@ -38,16 +32,21 @@ Modify your main conftest file (e.g. ``tests/conftest.py``) to include:
 
 .. code:: python
 
-    from pytest_reorder import default_flat_reordering_hook as pytest_collection_modifyitems  # add noqa here if you use pyflakes
+    from pytest_reorder import default_reordering_hook as pytest_collection_modifyitems  # add noqa here if you use pyflakes
 
 or specify a custom test order:
 
 .. code:: python
 
-    from pytest_reorder import make_flat_reordering_hook
+    from pytest_reorder import make_reordering_hook
     # Make unit tests run before 'db' tests, which run before 'web' tests. Other tests will run at
     # the very beginning of the suite:
-    pytest_collection_modifyitems = make_flat_reordering_hook([None, 'unit', 'db', 'web'])
+    pytest_collection_modifyitems = make_reordering_hook(
+        [None, r'(^|.*/)(test_)?unit', r'(^|.*/)(test_)?db', r'(^|.*/)(test_)?web'])
+
+Passed regular expressions match tests' nodeids strings py.test displays for each test case - like
+``test/test_prefix_reordering.py::test_reordering_default[test_names5-expected_test_order5]``.
+If more than one regex matches one test, the first one wins.
 
 
 Without pytest_reorder
@@ -55,17 +54,34 @@ Without pytest_reorder
 
 .. code::
 
-    sample_test_suite/test_sample.py ...
-    sample_test_suite/integration/test_some_integration.py ..
-    sample_test_suite/ui/test_some_ui.py .
-    sample_test_suite/unit/test_some_unit.py ..
+    sample_test_suites/flat/test_sample.py ...
+    sample_test_suites/flat/integration/test_some_integration.py ..
+    sample_test_suites/flat/ui/test_some_ui.py .
+    sample_test_suites/flat/unit/test_some_unit.py ..
+
+.. code::
+
+    sample_test_suites/nested/app_1/tests/integration/test_some_integration.py ..
+    sample_test_suites/nested/app_1/tests/ui/test_some_ui.py .
+    sample_test_suites/nested/app_1/tests/unit/test_some_unit.py ..
+    sample_test_suites/nested/app_2/tests/test_sth.py ...
+    sample_test_suites/nested/app_2/tests/test_unit.py .
+
 
 With pytest_reorder
 -------------------
 
 .. code::
 
-    sample_test_suite/unit/test_some_unit.py ..
-    sample_test_suite/test_sample.py ...
-    sample_test_suite/integration/test_some_integration.py ..
-    sample_test_suite/ui/test_some_ui.py .
+    sample_test_suites/flat/unit/test_some_unit.py ..
+    sample_test_suites/flat/test_sample.py ...
+    sample_test_suites/flat/integration/test_some_integration.py ..
+    sample_test_suites/flat/ui/test_some_ui.py .
+
+.. code::
+
+    sample_test_suites/nested/app_1/tests/unit/test_some_unit.py ..
+    sample_test_suites/nested/app_2/tests/test_unit.py .
+    sample_test_suites/nested/app_2/tests/test_sth.py ...
+    sample_test_suites/nested/app_1/tests/integration/test_some_integration.py ..
+    sample_test_suites/nested/app_1/tests/ui/test_some_ui.py .
