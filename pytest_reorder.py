@@ -35,11 +35,12 @@ def unpack_test_ordering(ordering):
     """
     Build a list of compiled regexes and the order of tests they match; get unmatched tests order.
 
-    >>> unpack_test_ordering(['a', 'b', None, 'k'])
-    ([('a', 0), ('b', 1), ('k', 3)], 2)
+    >>> unpack_test_ordering(['a.*', 'b.*', None, 'k.*'])
+    ([(re.compile(r'a.*'), 0), (re.compile(r'b.*'), 1), (re.compile(r'k.*'), 3)], 2)
 
     :param list ordering: a list of re strings matching test nodeids in desired order,
-        One None is required in the list to designate tests not matching any of the regexes.
+        One None is required in the list to specify the position of tests not matching any
+        of the regexes.
     :raise EmptyTestsOrderList: if the ``ordering`` list is empty
     :raise UndefinedUnmatchedTestsOrder: if ``ordering`` does not specify the order of unmatched
         tests
@@ -88,7 +89,7 @@ def make_reordering_hook(ordered_re_strings_matching_tests):
             """
             Get the sort key for tests reordering.
 
-            All items with matching the same regular expression the same key. This is OK since
+            All items matching the same regular expression will get the same key. This is OK since
             `list.sort`` is stable.
 
             :rtype: int

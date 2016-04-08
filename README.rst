@@ -6,7 +6,7 @@ pytest_reorder |status|
 
 Reorder tests depending on their paths.
 
-Normally tests are sorted alphabetically. That makes integration tests run before unit.
+Normally tests are sorted alphabetically. That makes integration tests run before unit tests.
 
 With **pytest_reorder** you can install a hook that will change the order of tests in the suite.
 By default **pytest_reorder** will seek for *unit*, *integration* and *ui* tests and put them in
@@ -17,8 +17,8 @@ the following order:
 #. *integration*
 #. *ui*
 
-The default regular expressions can find unit, integration and UI tests both laid flat and deeply
-nested. You can also specify your custom order.
+The default regular expressions can find unit, integration and UI tests both laid flat and **deeply
+nested**. You can also specify your custom order.
 
 
 Pythons supported
@@ -44,9 +44,9 @@ or specify a custom test order:
     pytest_collection_modifyitems = make_reordering_hook(
         [None, r'(^|.*/)(test_)?unit', r'(^|.*/)(test_)?db', r'(^|.*/)(test_)?web'])
 
-Passed regular expressions match tests' nodeids strings py.test displays for each test case - like
+Passed regular expressions match nodeids (strings py.test identifies each test case with) - like
 ``test/test_prefix_reordering.py::test_reordering_default[test_names5-expected_test_order5]``.
-If more than one regex matches one test, the first one wins.
+If more than one regex matches some test nodeid, the first one wins.
 
 
 Without pytest_reorder
