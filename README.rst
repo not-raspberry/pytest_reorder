@@ -13,7 +13,7 @@ By default **pytest_reorder** will seek for *unit*, *integration* and *ui* tests
 the following order:
 
 #. *unit*
-#. all tests with names beginning with something else
+#. all tests with names not indicating unit integration, nor UI tests
 #. *integration*
 #. *ui*
 
@@ -25,8 +25,21 @@ Pythons supported
 -----------------
 CPythons 2.7, 3.2, 3.3, 3.4, 3.5, 3.5-dev, nightly. PyPy and PyPy3.
 
-HOWTO
------
+Command line interface HOWTO
+----------------------------
+
+*pytest_reorder* hooks in a ``--reorder`` command line option that takes zero arguments or an
+ordering spec list.
+
+#. If no arguments are given, default reordering will be applied.
+#. If a list is passed, e.g. ``--reorder '(^|.*/)(test_)?unit' '*' '(^|.*/)(test_)?web'``, tests
+   are reordered to go as the matches the list do. Regular list items are treated as Python regexes.
+   The special ``'*'`` match is required and specifies where to put tests that don't match any
+   of the regexes. A single asterisk was chosen for that because it's not a valid regular
+   expression.
+
+Programmatic interface HOWTO
+----------------------------
 
 Modify your main conftest file (e.g. ``tests/conftest.py``) to include:
 

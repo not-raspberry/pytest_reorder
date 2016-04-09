@@ -2,7 +2,7 @@
 # coding: utf-8
 """Project setup."""
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -37,8 +37,11 @@ setup(
     author='Michał Pawłowski',
     author_email='@'.join(['unittestablecode', 'gmail.com']),
     license='MIT',
-    py_modules=['pytest_reorder'],
+    packages=find_packages(exclude=['sample_test_suites', 'test_pytest_reorder']),
     install_requires=REQUIREMENTS,
     tests_require=TEST_REQUIREMENTS,
     extras_require={'tests': TEST_REQUIREMENTS},
+    entry_points={
+        'pytest11': 'reorder=pytest_reorder.hook'
+    }
 )
