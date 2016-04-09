@@ -113,56 +113,56 @@ def test_reordering_custom_test_order():
 
 @pytest.mark.parametrize('pytest_invocation, expected_test_order', [
     (
-        ['py.test', 'sample_test_suites/flat/'],
+        ['py.test', 'tests/sample_test_suites/flat/'],
         [
-            b'sample_test_suites/flat/unit/test_some_unit.py',
-            b'sample_test_suites/flat/test_sample.py',
-            b'sample_test_suites/flat/integration/test_some_integration.py',
-            b'sample_test_suites/flat/ui/test_some_ui.py',
+            b'tests/sample_test_suites/flat/unit/test_some_unit.py',
+            b'tests/sample_test_suites/flat/test_sample.py',
+            b'tests/sample_test_suites/flat/integration/test_some_integration.py',
+            b'tests/sample_test_suites/flat/ui/test_some_ui.py',
         ]
     ),
     (
-        ['py.test', 'sample_test_suites/nested/'],
+        ['py.test', 'tests/sample_test_suites/nested/'],
         [
 
-            b'sample_test_suites/nested/app_1/tests/unit/test_some_unit.py',
-            b'sample_test_suites/nested/app_2/tests/test_unit.py',
-            b'sample_test_suites/nested/app_2/tests/test_sth.py',
-            b'sample_test_suites/nested/app_1/tests/integration/test_some_integration.py',
-            b'sample_test_suites/nested/app_1/tests/ui/test_some_ui.py',
+            b'tests/sample_test_suites/nested/app_1/tests/unit/test_some_unit.py',
+            b'tests/sample_test_suites/nested/app_2/tests/test_unit.py',
+            b'tests/sample_test_suites/nested/app_2/tests/test_sth.py',
+            b'tests/sample_test_suites/nested/app_1/tests/integration/test_some_integration.py',
+            b'tests/sample_test_suites/nested/app_1/tests/ui/test_some_ui.py',
         ]
     ),
     (
         # No `--reorder` argument - no reordering.
-        ['py.test', 'sample_test_suites/flat_hook_not_imported/'],
+        ['py.test', 'tests/sample_test_suites/flat_hook_not_imported/'],
         [
-            b'sample_test_suites/flat_hook_not_imported/test_sample.py',
-            b'sample_test_suites/flat_hook_not_imported/integration/test_some_integration.py',
-            b'sample_test_suites/flat_hook_not_imported/ui/test_some_ui.py',
-            b'sample_test_suites/flat_hook_not_imported/unit/test_some_unit.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/test_sample.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/integration/test_some_integration.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/ui/test_some_ui.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/unit/test_some_unit.py',
         ]
     ),
     (
         # `--reorder` with no extra args default order.
-        ['py.test', 'sample_test_suites/flat_hook_not_imported/', '--reorder'],
+        ['py.test', 'tests/sample_test_suites/flat_hook_not_imported/', '--reorder'],
         [
-            b'sample_test_suites/flat_hook_not_imported/unit/test_some_unit.py',
-            b'sample_test_suites/flat_hook_not_imported/test_sample.py',
-            b'sample_test_suites/flat_hook_not_imported/integration/test_some_integration.py',
-            b'sample_test_suites/flat_hook_not_imported/ui/test_some_ui.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/unit/test_some_unit.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/test_sample.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/integration/test_some_integration.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/ui/test_some_ui.py',
         ]
     ),
     (
         # `--reorder` with no custom ordering.
         [
-            'py.test', 'sample_test_suites/flat_hook_not_imported/',
+            'py.test', 'tests/sample_test_suites/flat_hook_not_imported/',
             '--reorder', '*', '(test_|.*/)unit', '(test_|.*/)ui', '(test_|.*/)integration',
         ],
         [
-            b'sample_test_suites/flat_hook_not_imported/test_sample.py',  # does not match anything
-            b'sample_test_suites/flat_hook_not_imported/unit/test_some_unit.py',
-            b'sample_test_suites/flat_hook_not_imported/ui/test_some_ui.py',
-            b'sample_test_suites/flat_hook_not_imported/integration/test_some_integration.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/test_sample.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/unit/test_some_unit.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/ui/test_some_ui.py',
+            b'tests/sample_test_suites/flat_hook_not_imported/integration/test_some_integration.py',
         ]
     ),
 ])
@@ -170,7 +170,7 @@ def test_reordering_invoke_test_suite(pytest_invocation, expected_test_order):
     """Check the order of a sample test suite, invoked in a separate process."""
     output = subprocess.check_output(pytest_invocation)
     lines_with_test_modules = [line for line in output.split(b'\n')
-                               if line.startswith(b'sample_test_suites/')]
+                               if line.startswith(b'tests/sample_test_suites/')]
     test_modules = [line.split()[0] for line in lines_with_test_modules]
     assert test_modules == expected_test_order
 
@@ -179,7 +179,7 @@ def test_commandline_reorder_option_no_unmatched_tests_order():
     """Test invoking pytest with the '--reorder' option."""
     with pytest.raises(subprocess.CalledProcessError) as bad_call:
         subprocess.check_output([
-            'py.test', 'sample_test_suites/flat_hook_not_imported/',
+            'py.test', 'tests/sample_test_suites/flat_hook_not_imported/',
             '--reorder', 'match_a', 'match_b', 'match_c',
         ])
 

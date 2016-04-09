@@ -10,9 +10,14 @@ python:
   - 'pypy'
   - 'pypy3'
 install:
-    - './setup.py develop'
-    - "pip install -e '.[tests]'"
+    # Commented out to check if Travis does what I think it does.
+    - './setup.py sdist'
+    - 'pip install dist/pytest_reorder-*.tar.gz'
+    - 'pip install -e ".[tests]"'
 script:
-    - pylama
-    - py.test test_pytest_reorder.py -vvvv --showlocals
+    - 'pylama'
+    # Make sure we're using the installed library, not the one from the project root.
+    # There is a better way but I dislike having the additional 'src' dir:
+    - 'rm pytest_reorder -r'
+    - 'py.test -vvvv --showlocals'
 sudo: false

@@ -37,7 +37,7 @@ setup(
     author='Michał Pawłowski',
     author_email='@'.join(['unittestablecode', 'gmail.com']),
     license='MIT',
-    packages=find_packages(exclude=['sample_test_suites', 'test_pytest_reorder']),
+    packages=find_packages(exclude=['tests']),
     install_requires=REQUIREMENTS,
     tests_require=TEST_REQUIREMENTS,
     extras_require={'tests': TEST_REQUIREMENTS},
