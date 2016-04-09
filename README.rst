@@ -4,7 +4,9 @@ pytest_reorder |status|
 .. |status| image:: https://travis-ci.org/not-raspberry/pytest_reorder.svg?branch=master
     :target: https://travis-ci.org/not-raspberry/pytest_reorder
 
-Reorder tests depending on their paths.
+Reorder tests depending on their nodeids (strings of test file path plus test name plus
+parametrization, like:
+``test/test_prefix_reordering.py::test_reordering_default[test_names5-expected_test_order5]``.
 
 Normally tests are sorted alphabetically. That makes integration tests run before unit tests.
 
@@ -13,7 +15,7 @@ By default **pytest_reorder** will seek for *unit*, *integration* and *ui* tests
 the following order:
 
 #. *unit*
-#. all tests with names not indicating unit integration, nor UI tests
+#. all tests with names not indicating unit, integration, nor UI tests
 #. *integration*
 #. *ui*
 
@@ -25,10 +27,17 @@ Pythons supported
 -----------------
 CPythons 2.7, 3.2, 3.3, 3.4, 3.5, 3.5-dev, nightly. PyPy and PyPy3.
 
-Command line interface HOWTO
-----------------------------
+HOWTO
+-----
 
-*pytest_reorder* hooks in a ``--reorder`` command line option that takes zero arguments or an
+It's possible to customize the ordering. To do so, you have to specify your custom tests order
+by passing a list of regular expresions that match tests' nodeids.  If more than one regex matches
+some test nodeid, the first one wins.
+
+Command line interface
+~~~~~~~~~~~~~~~~~~~~~~
+
+**pytest_reorder** hooks in a ``--reorder`` command line option that takes zero arguments or an
 ordering spec list.
 
 #. If no arguments are given, default reordering will be applied.
@@ -38,8 +47,8 @@ ordering spec list.
    of the regexes. A single asterisk was chosen for that because it's not a valid regular
    expression.
 
-Programmatic interface HOWTO
-----------------------------
+Programmatic interface
+~~~~~~~~~~~~~~~~~~~~~~
 
 Modify your main conftest file (e.g. ``tests/conftest.py``) to include:
 
@@ -56,10 +65,6 @@ or specify a custom test order:
     # the very beginning of the suite:
     pytest_collection_modifyitems = make_reordering_hook(
         [None, r'(^|.*/)(test_)?unit', r'(^|.*/)(test_)?db', r'(^|.*/)(test_)?web'])
-
-Passed regular expressions match nodeids (strings py.test identifies each test case with) - like
-``test/test_prefix_reordering.py::test_reordering_default[test_names5-expected_test_order5]``.
-If more than one regex matches some test nodeid, the first one wins.
 
 
 Without pytest_reorder
