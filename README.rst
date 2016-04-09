@@ -26,6 +26,7 @@ nested**. You can also specify your custom order.
 Pythons supported
 -----------------
 CPythons 2.7, 3.2, 3.3, 3.4, 3.5, 3.5-dev, nightly. PyPy and PyPy3.
+Development happens mostly under Python 2.7 (for no good reason) but Travis builds them all.
 
 HOWTO
 -----
