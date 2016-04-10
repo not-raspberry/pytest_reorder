@@ -32,7 +32,7 @@ HOWTO
 -----
 
 It's possible to customize the ordering. To do so, you have to specify your custom tests order
-by passing a list of regular expresions that match tests' nodeids.  If more than one regex matches
+by passing a list of regular expresions that match tests' nodeids. If more than one regex matches
 some test nodeid, the first one wins.
 
 Command line interface
@@ -43,9 +43,9 @@ ordering spec list.
 
 #. If no arguments are given, default reordering will be applied.
 #. If a list is passed, e.g. ``--reorder '(^|.*/)(test_)?unit' '*' '(^|.*/)(test_)?web'``, tests
-   are reordered to go as the matches the list do. Regular list items are treated as Python regexes.
-   The special ``'*'`` match is required and specifies where to put tests that don't match any
-   of the regexes. A single asterisk was chosen for that because it's not a valid regular
+   are reordered to go as the matches in the list do. Regular list items are treated as Python
+   regexes. The special ``'*'`` match is required and specifies where to put tests that don't
+   match any of the regexes. A single asterisk was chosen for that because it's not a valid regular
    expression.
 
 Programmatic interface
