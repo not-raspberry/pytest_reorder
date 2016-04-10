@@ -22,13 +22,13 @@ TEST_REQUIREMENTS = [
 
 setup(
     name='pytest_reorder',
-    version='0.0.1',
-    description='Reorder tests depending on their names.',
+    version='0.1.0',
+    description='Reorder tests depending on their paths and names.',
     long_description=README,
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Testing'
+        'Topic :: Software Development :: Testing',
         'License :: OSI Approved :: MIT License',
         'Framework :: Pytest',
         # Let's be honest - most development happens under Python 2.7.
@@ -48,6 +48,7 @@ setup(
     keywords='pytest order reorder test',
     author='Michał Pawłowski',
     author_email='@'.join(['unittestablecode', 'gmail.com']),
+    url='https://github.com/not-raspberry/pytest_reorder',
     license='MIT',
     packages=find_packages(exclude=['tests']),
     install_requires=REQUIREMENTS,

@@ -6,7 +6,7 @@ pytest_reorder |status|
 
 Reorder tests depending on their nodeids (strings of test file path plus test name plus
 parametrization, like:
-``test/test_prefix_reordering.py::test_reordering_default[test_names5-expected_test_order5]``.
+``test/test_prefix_reordering.py::test_reordering_default[test_names5-expected_test_order5]``).
 
 Normally tests are sorted alphabetically. That makes integration tests run before unit tests.
 
@@ -71,12 +71,17 @@ or specify a custom test order:
 Without pytest_reorder
 ----------------------
 
+Flat:
+
 .. code::
 
     sample_test_suites/flat/test_sample.py ...
     sample_test_suites/flat/integration/test_some_integration.py ..
     sample_test_suites/flat/ui/test_some_ui.py .
     sample_test_suites/flat/unit/test_some_unit.py ..
+
+
+Nested:
 
 .. code::
 
@@ -90,12 +95,17 @@ Without pytest_reorder
 With pytest_reorder
 -------------------
 
+Flat:
+
 .. code::
 
     sample_test_suites/flat/unit/test_some_unit.py ..
     sample_test_suites/flat/test_sample.py ...
     sample_test_suites/flat/integration/test_some_integration.py ..
     sample_test_suites/flat/ui/test_some_ui.py .
+
+
+Nested:
 
 .. code::
 
