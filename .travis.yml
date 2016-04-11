@@ -10,7 +10,6 @@ python:
   - 'pypy'
   - 'pypy3'
 install:
-    # Commented out to check if Travis does what I think it does.
     - './setup.py sdist'
     - 'pip install dist/pytest_reorder-*.tar.gz'
     - 'pip install -e ".[tests]"'

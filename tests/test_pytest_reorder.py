@@ -80,7 +80,7 @@ def test_bad_ordering(function):
     ([], []),
 ])
 def test_reordering_default(test_names, expected_test_order):
-    """Call library's ``pytest_collection_modifyitems`` function and check resulting tests order."""
+    """Call library's ``default_reordering_hook`` and check resulting tests order."""
     test_items = [Mock(nodeid=test_name) for test_name in test_names]
 
     default_reordering_hook(None, None, test_items)
@@ -143,7 +143,7 @@ def test_reordering_custom_test_order():
         ]
     ),
     (
-        # `--reorder` with no extra args default order.
+        # `--reorder` with no extra args - default order.
         ['py.test', 'tests/sample_test_suites/flat_hook_not_imported/', '--reorder'],
         [
             b'tests/sample_test_suites/flat_hook_not_imported/unit/test_some_unit.py',
@@ -153,7 +153,7 @@ def test_reordering_custom_test_order():
         ]
     ),
     (
-        # `--reorder` with no custom ordering.
+        # `--reorder` with custom ordering.
         [
             'py.test', 'tests/sample_test_suites/flat_hook_not_imported/',
             '--reorder', '*', '(test_|.*/)unit', '(test_|.*/)ui', '(test_|.*/)integration',
@@ -167,7 +167,7 @@ def test_reordering_custom_test_order():
     ),
 ])
 def test_reordering_invoke_test_suite(pytest_invocation, expected_test_order):
-    """Check the order of a sample test suite, invoked in a separate process."""
+    """Check the order of tests in sample test suites, invoked in a subprocess."""
     output = subprocess.check_output(pytest_invocation)
     lines_with_test_modules = [line for line in output.split(b'\n')
                                if line.startswith(b'tests/sample_test_suites/')]
@@ -176,7 +176,7 @@ def test_reordering_invoke_test_suite(pytest_invocation, expected_test_order):
 
 
 def test_commandline_reorder_option_no_unmatched_tests_order():
-    """Test invoking pytest with the '--reorder' option."""
+    """Test invoking pytest with the '--reorder' option and an invalid ordering list."""
     with pytest.raises(subprocess.CalledProcessError) as bad_call:
         subprocess.check_output([
             'py.test', 'tests/sample_test_suites/flat_hook_not_imported/',

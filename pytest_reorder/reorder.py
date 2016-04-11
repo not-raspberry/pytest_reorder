@@ -1,4 +1,4 @@
-"""A pre-specified hook to reorder functions and its building blocks."""
+"""A pre-specified hook to reorder test functions and its building blocks."""
 import re
 
 
