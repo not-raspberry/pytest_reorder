@@ -1,9 +1,12 @@
 """Pytest-reorder test suite."""
+import re
+
 import pytest
 import subprocess
 from mock import Mock
 from pytest_reorder import (
     default_reordering_hook, unpack_test_ordering, make_reordering_hook,
+    DEFAULT_ORDER
 )
 from pytest_reorder.reorder import (
     EmptyTestsOrderList, UndefinedUnmatchedTestsOrder
@@ -21,6 +24,38 @@ def test_bad_ordering(function):
 
     with pytest.raises(UndefinedUnmatchedTestsOrder):
         function(['sth', 'sth_else', 'etc'])
+
+
+@pytest.mark.parametrize('path_template, matches', [
+    ('test_{}.py:test_aaa', True),
+    ('tests/{}/test_something.py:test_aaa', True),
+    ('tests/{}/test_something.py:test_aaa[parametrization-1]', True),
+    ('a/b/c/d/e/f/tests/{}/test_something.py:test_kkk', True),
+    ('something/test_{}.py:test_aaa', True),
+    ('{}/test_sth.py:test_aaa', True),
+
+    ('something/test_SOMETHING_HERE{}.py:test_aaa', False),
+    ('some{}.py:test_aaa', False),
+    ('test_something.py:test_aaa[test_{}.py]', False),
+    ('test_something.py:test_aaa[{}]', False),
+])
+def test_default_order_regexes(path_template, matches):
+    """Test path matching with default regexes."""
+    unit_match, integration_match, ui_match = (
+        re.compile(match) for match in DEFAULT_ORDER if match is not None)
+    unit_path, integration_path, ui_path = map(path_template.format, ['unit', 'integration', 'ui'])
+
+    assert bool(unit_match.match(unit_path)) is matches
+    assert unit_match.match(integration_path) is None
+    assert unit_match.match(ui_path) is None
+
+    assert integration_match.match(unit_path) is None
+    assert bool(integration_match.match(integration_path)) is matches
+    assert integration_match.match(ui_path) is None
+
+    assert ui_match.match(unit_path) is None
+    assert ui_match.match(integration_path) is None
+    assert bool(ui_match.match(ui_path)) is matches
 
 
 @pytest.mark.parametrize('test_names, expected_test_order', [
