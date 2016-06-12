@@ -1,8 +1,14 @@
-pytest_reorder |status|
-=======================
+pytest_reorder |status| |version| |pythons|
+===========================================
 
 .. |status| image:: https://travis-ci.org/not-raspberry/pytest_reorder.svg?branch=master
     :target: https://travis-ci.org/not-raspberry/pytest_reorder
+
+.. |version| image:: https://img.shields.io/pypi/v/pytest_reorder.svg?maxAge=2592000
+    :target: https://pypi.python.org/pypi/pytest-reorder
+
+.. |pythons| image:: https://img.shields.io/pypi/pyversions/pytest_reorder.svg?maxAge=2592000
+    :target: https://pypi.python.org/pypi/pytest-reorder
 
 Reorder tests depending on their nodeids (strings of test file path plus test name plus
 parametrization, like:
@@ -22,11 +28,6 @@ the following order:
 The default regular expressions can find unit, integration and UI tests both laid flat and **deeply
 nested**. You can also specify your custom order.
 
-
-Pythons supported
------------------
-CPythons 2.7, 3.2, 3.3, 3.4, 3.5, 3.5-dev, nightly. PyPy and PyPy3.
-Development happens mostly under Python 2.7 (for no good reason) but Travis builds them all.
 
 HOWTO
 -----
