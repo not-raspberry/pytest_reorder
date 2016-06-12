@@ -1,5 +1,5 @@
-pytest_reorder |status| |version| |pythons|
-===========================================
+pytest_reorder |status| |version| |pythons| |coverage|
+======================================================
 
 .. |status| image:: https://travis-ci.org/not-raspberry/pytest_reorder.svg?branch=master
     :target: https://travis-ci.org/not-raspberry/pytest_reorder
@@ -8,7 +8,9 @@ pytest_reorder |status| |version| |pythons|
     :target: https://pypi.python.org/pypi/pytest-reorder
 
 .. |pythons| image:: https://img.shields.io/pypi/pyversions/pytest_reorder.svg?maxAge=2592000
-    :target: https://pypi.python.org/pypi/pytest-reorder
+
+.. |coverage| image:: https://coveralls.io/repos/github/not-raspberry/pytest_reorder/badge.svg?branch=master
+    :target: https://coveralls.io/github/not-raspberry/pytest_reorder?branch=master
 
 Reorder tests depending on their nodeids (strings of test file path plus test name plus
 parametrization, like:

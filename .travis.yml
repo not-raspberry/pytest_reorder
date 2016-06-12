@@ -13,10 +13,17 @@ install:
     - './setup.py sdist'
     - 'pip install dist/pytest_reorder-*.tar.gz'
     - 'pip install -e ".[tests]"'
+    - 'pip install coveralls'
+      # This is not good but `coverage` does not support Python 3.2 anymore. Maybe this project
+      # should do the same:
+    - 'if [ "$TRAVIS_PYTHON_VERSION" == "3.2" ]; then pip install coverage==3.7.1; fi'
+    - 'pip install pytest-cov'
 script:
     - 'pylama'
     # Make sure we're using the installed library, not the one from the project root.
     # There is a better way but I dislike having the additional 'src' dir:
     - 'rm pytest_reorder -r'
-    - 'py.test -vvvv --showlocals'
+    - 'py.test -vvvv --cov --cov-config .coveragerc --showlocals'
+after_success:
+- 'coveralls'
 sudo: false
