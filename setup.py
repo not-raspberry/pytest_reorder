@@ -15,9 +15,9 @@ REQUIREMENTS = [
 ]
 
 TEST_REQUIREMENTS = [
-    'pylama==7.0.6',
-    'pytest==2.8.5',
-    'mock==1.3.0',
+    'pylama==7.4.3',
+    'pytest==3.6.0',
+    'mock==2.0.0',
 ]
 
 setup(
@@ -31,16 +31,16 @@ setup(
         'Topic :: Software Development :: Testing',
         'License :: OSI Approved :: MIT License',
         'Framework :: Pytest',
-        # Let's be honest - most development happens under Python 2.7.
+        # Let's be honest - most development happens under Python 3.6.
         # All other Pythons are build by Travis. It should be enough because the test suite
         # actually tests something.
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Operating System :: POSIX :: Linux',

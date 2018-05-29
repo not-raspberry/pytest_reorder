@@ -1,31 +1,27 @@
 language: python
 python:
   - '2.7'
-  - '3.2'
   - '3.3'
   - '3.4'
   - '3.5'
-  - '3.5-dev'
-  - 'nightly'
+  - '3.6'
+  # 'nightly' disabled as pylama doesn't work with it - https://github.com/klen/pylama/pull/120
   - 'pypy'
   - 'pypy3'
 install:
-    - './setup.py sdist'
-    - 'pip install -e ".[tests]"'
-      # The dist must be installed after .[tests] so it's not overridden:
-    - 'pip uninstall pytest_reorder -y'
-    - 'pip install dist/pytest_reorder-*.tar.gz'
-    - 'pip install coveralls'
-      # This is not good but `coverage` does not support Python 3.2 anymore. Maybe this project
-      # should do the same:
-    - 'if [ "$TRAVIS_PYTHON_VERSION" == "3.2" ]; then pip install coverage==3.7.1; fi'
-    - 'pip install pytest-cov'
+  - './setup.py sdist'
+  - 'pip install -e ".[tests]"'
+  # The dist must be installed after .[tests] so it's not overridden (not necessary with pip 10):
+  - 'pip uninstall pytest_reorder -y'
+  - 'pip install dist/pytest_reorder-*.tar.gz'
+  - 'pip install coveralls'
+  - 'pip install pytest-cov'
 script:
-    - 'pylama'
-    # Make sure we're using the installed library, not the one from the project root.
-    # There is a better way but I dislike having the additional 'src' dir:
-    - 'rm pytest_reorder -r'
-    - 'py.test -vvvv --cov --cov-config .coveragerc --showlocals'
+  - 'pylama'
+  # Make sure we're using the installed library, not the one from the project root.
+  # There is a better way but I dislike having the additional 'src' dir:
+  - 'rm pytest_reorder -r'
+  - 'py.test -vvvv --cov --cov-config .coveragerc --showlocals'
 after_success:
-- 'coveralls'
+  - 'coveralls'
 sudo: false
