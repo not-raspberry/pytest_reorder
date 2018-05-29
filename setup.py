@@ -22,7 +22,7 @@ TEST_REQUIREMENTS = [
 
 setup(
     name='pytest_reorder',
-    version='0.1.0',
+    version='0.1.1',
     description='Reorder tests depending on their paths and names.',
     long_description=README,
     classifiers=[
@@ -46,7 +46,7 @@ setup(
         'Operating System :: POSIX :: Linux',
     ],
     keywords='pytest order reorder test',
-    author='Michał Pawłowski',
+    author='not-raspberry',
     author_email='@'.join(['unittestablecode', 'gmail.com']),
     url='https://github.com/not-raspberry/pytest_reorder',
     license='MIT',
