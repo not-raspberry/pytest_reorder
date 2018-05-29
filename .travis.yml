@@ -11,8 +11,10 @@ python:
   - 'pypy3'
 install:
     - './setup.py sdist'
-    - 'pip install dist/pytest_reorder-*.tar.gz'
     - 'pip install -e ".[tests]"'
+      # The dist must be installed after .[tests] so it's not overridden:
+    - 'pip uninstall pytest_reorder -y'
+    - 'pip install dist/pytest_reorder-*.tar.gz'
     - 'pip install coveralls'
       # This is not good but `coverage` does not support Python 3.2 anymore. Maybe this project
       # should do the same:
