@@ -16,7 +16,7 @@ REQUIREMENTS = [
 
 TEST_REQUIREMENTS = [
     'pylama==7.4.3',
-    'pytest==3.6.0',
+    'pytest==9.0.3',
     'mock==2.0.0',
 ]
 
